@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2018 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config BOARD_ACRN_EFI_UOS
+	bool "ACRN/EFI User OS"
+	depends on SOC_IA32
+	select HAS_DTS
+	select CPU_HAS_FPU if !X86_IAMCU
+	select X86_MMU
+	select SET_GDT
