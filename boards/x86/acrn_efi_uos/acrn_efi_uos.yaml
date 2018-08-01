@@ -1,0 +1,10 @@
+identifier: acrn_efi_uos
+name: ACRN_EFI_UOS
+type: mcu
+arch: x86
+toolchain:
+  - zephyr
+testing:
+  ignore_tags:
+     - net
+     - bluetooth
