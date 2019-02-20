@@ -35,9 +35,8 @@ config UART_SHELL_ON_DEV_NAME
 # Internal config to enable UART interrupts if supported.
 config SHELL_BACKEND_SERIAL_INTERRUPT_DRIVEN
 	bool "Interrupt driven"
-	default y
+	default y if UART_INTERRUPT_DRIVEN
 	depends on SERIAL_SUPPORT_INTERRUPT
-	select UART_INTERRUPT_DRIVEN
 
 config SHELL_BACKEND_SERIAL_TX_RING_BUFFER_SIZE
 	int "Set TX ring buffer size"
