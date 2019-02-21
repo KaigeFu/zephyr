@@ -48,11 +48,26 @@ void _SysFatalErrorHandler(unsigned int reason, const NANO_ESF *pEsf)
 #define DO_BARRIERS() do { } while (0)
 #endif
 
+#if defined(CONFIG_ARM)
+#define NO_EXECUTE_SUPPORT 1
+#elif defined(CONFIG_ARC)
+#define NO_EXECUTE_SUPPORT 1
+#elif defined(CONFIG_X86)
+#if defined(CONFIG_X86_PAE_MODE)
+#define NO_EXECUTE_SUPPORT 1
+#else
+/* 32-bit paging mode in x86 doesn't support execute disable capability.*/
+#endif	/* x86 */
+#else
+#error "Architecture not supported"
+#endif
+
 static int __attribute__((noinline)) add_one(int i)
 {
 	return (i + 1);
 }
 
+#ifdef NO_EXECUTE_SUPPORT
 static void execute_from_buffer(u8_t *dst)
 {
 	void *src = FUNC_TO_PTR(add_one);
@@ -79,6 +94,7 @@ static void execute_from_buffer(u8_t *dst)
 		INFO("Did not get expected return value!\n");
 	}
 }
+#endif
 
 /**
  * @brief Test write to read only section
@@ -145,6 +161,7 @@ static void write_text(void)
  *
  * @ingroup kernel_memprotect_tests
  */
+#ifdef NO_EXECUTE_SUPPORT
 static void exec_data(void)
 {
 	execute_from_buffer(data_buf);
@@ -184,6 +201,24 @@ static void exec_heap(void)
 	ztest_test_skip();
 }
 #endif
+
+#else
+static void exec_data(void)
+{
+	ztest_test_skip();
+}
+
+static void exec_stack(void)
+{
+	ztest_test_skip();
+}
+
+static void exec_heap(void)
+{
+	ztest_test_skip();
+}
+
+#endif /* NO_EXECUTE_SUPPORT */
 
 void test_main(void)
 {
